@@ -5,6 +5,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <style type="text/css" rel="stylesheet">
 	body {font-family: Verdana, Geneva, Arial, Helvetica}
+	.geocode  {width: 20em; background-color: #FFFFCC;}
 </style>
 </head>
 <body>
@@ -21,12 +22,12 @@
 <table>
 <tr><td><label for="inputLatitude">Latitude</label></td><td><input type="text" name="inputLatitude" v-model="inputLatitude"/></td></tr>
 <tr><td><label for="inputLongitude">Longitude</label></td><td><input type="text" name="inputLongitude" v-model="inputLongitude"/></td></tr>
-<tr><td><label for="outputGeocode">Numeric geocode</label></td><td><input type="text" name="outputGeocode" v-model="outputGeocode"/></td></tr>
+<tr><td><label for="outputGeocode">Numeric geocode</label></td><td><input type="text"  class="geocode" name="outputGeocode" v-model="outputGeocode"/></td></tr>
 </table>
 
 <h2>all-numeric geocode to latitude, longitude</h2>
 <table>
-<tr><td><label for="inputGeocode">Numeric geocode</label></td><td><input type="text" name="inputGeocode" v-model="inputGeocode"/></td></tr>
+<tr><td><label for="inputGeocode">Numeric geocode</label></td><td><input type="text"  class="geocode" name="inputGeocode" v-model="inputGeocode"/><button @click="copyGeocode">Copy from above</button></td></tr>
 <tr><td><label for="outputLatitude">Latitude</label></td><td><input type="text" name="outputLatitude" v-model="outputLatitude"/></td></tr>
 <tr><td><label for="outputLongitude">Longitude</label></td><td><input type="text" name="outputLongitude" v-model="outputLongitude"/></td></tr>
 </table>
@@ -118,7 +119,11 @@ let app1 = new Vue({
 		outputLongitude: function() {
 			return getComponent(this.decodedObject,"lon");
 		}
-
+	},
+	methods : {
+		copyGeocode : function() {
+			this.inputGeocode = this.outputGeocode;
+		}
 	}
 });	
 
