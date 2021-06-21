@@ -74,8 +74,8 @@ function latlon2geocode(lat,lon) {
 function geocode2latlon(geocode) {
 	let re=new RegExp('^[0-9]{20}$');
 	if ( (geocode !=="") && (re.test(geocode)) ) {
-		let clat=geocode.substr(0,10);
-		let clon=geocode.substr(10,10);
+		let clat=geocode.substr(0,8);
+		let clon=geocode.substr(8,8);
 		let lat=(parseInt(clat)-9000000)/1e5;
 		let lon=parseInt(clon)/1e5;
 		if (lon > 180) {
