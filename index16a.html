@@ -72,7 +72,7 @@ function latlon2geocode(lat,lon) {
 }
 
 function geocode2latlon(geocode) {
-	let re=new RegExp('^[0-9]{20}$');
+	let re=new RegExp('^[0-9]{16}$');
 	if ( (geocode !=="") && (re.test(geocode)) ) {
 		let clat=geocode.substr(0,8);
 		let clon=geocode.substr(8,8);
