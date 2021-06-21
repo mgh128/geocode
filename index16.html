@@ -52,8 +52,8 @@ let inputGeocode="";
 
 function latlon2geocode(lat,lon) {
 
-	function pad10(str) {
-		return "0".repeat(10-str.length)+str;
+	function pad8(str) {
+		return "0".repeat(8-str.length)+str;
 	}
 
 	let rv="";
@@ -66,7 +66,7 @@ function latlon2geocode(lat,lon) {
 		la+=90;
 		let lat5=Math.floor(la*1e5);
 		let lon5=Math.floor(lo*1e5);
-		rv= pad10(lat5.toString())+pad10(lon5.toString());
+		rv= pad8(lat5.toString())+pad8(lon5.toString());
 	}
 	return rv;
 }
