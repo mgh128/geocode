@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<style type="text/css" rel="stylesheet">
+	body {font-family: Verdana, Geneva, Arial, Helvetica}
+	.geocode  {width: 20em; background-color: #FFFFCC;}
+</style>
+</head>
+<body>
+
+<h1>Experiments with all-numeric geocodes</h1>
+
+<p><a href="https://en.wikipedia.org/wiki/Open_Location_Code" target="_blank">Open Location Code</a> uses 11 alphanumeric characters to identify a rectangle on the surface of the Earth, with a spatial precision around 3.5 metres</p>
+<p>Using 16 numeric digits it is possible to encode WGS84 latitude/longitude coordinates with a precision of around 1.1 metres</p>
+<p>That's because 0.00001 degrees corresponds to approximately 1.1m  on the surface of the Earth (2&pi; * 6371,000m / 1E5 / 360)</p>
+
+<div id="app1">
+
+
+	
+<h2>Latitude, longitude to geocode</h2>
+<table>
+<tr><td><label for="inputLatitude">Latitude</label></td><td><input type="text" name="inputLatitude" v-model="inputLatitude"/></td></tr>
+<tr><td><label for="inputLongitude">Longitude</label></td><td><input type="text" name="inputLongitude" v-model="inputLongitude"/></td></tr>
+<tr><td><label for="outputGeocode">Numeric geocode</label></td><td><input type="text"  class="geocode" name="outputGeocode" v-model="outputGeocode"/></td></tr>
+</table>
+
+<h3>Demo locations</h3>
+	<p><button @click="demo1">Reality Checkpoint, Cambridge, UK</button>&nbsp;
+	<button @click="demo2">Bowali Visitor Centre, Kakadu National Park, Northern Territory, Australia</button>&nbsp;
+	<button @click="clear">Clear demo values</button></p>
+	
+<h2>all-numeric geocode to latitude, longitude</h2>
+<table>
+<tr><td><label for="inputGeocode">Numeric geocode</label></td><td><input type="text"  class="geocode" name="inputGeocode" v-model="inputGeocode"/><button @click="copyGeocode">Copy from above</button></td></tr>
+<tr><td><label for="outputLatitude">Latitude</label></td><td><input type="text" name="outputLatitude" v-model="outputLatitude"/></td></tr>
+<tr><td><label for="outputLongitude">Longitude</label></td><td><input type="text" name="outputLongitude" v-model="outputLongitude"/></td></tr>
+</table>
+<p v-if="openStreetMapURL"><a :href="openStreetMapURL" target="_blank">View on OpenStreetMap</p>
+
+</div>
+
+<script language="javascript">
+
+let inputLatitude="";
+let inputLongitude="";
+let outputLatitude="";
+let outputLongitude="";
+let inputGeocode="";
+
+function latlon2geocode(lat,lon) {
+
+	function pad10(str) {
+		return "0".repeat(10-str.length)+str;
+	}
+
+	let rv="";
+	if ((lat!=="") && (lon !=="")) {
+		let la=parseFloat(lat);
+		let lo=parseFloat(lon);
+		if (lo < 0) {
+		lo+=360;
+		}
+		la+=90;
+		let lat5=Math.floor(la*1e5);
+		let lon5=Math.floor(lo*1e5);
+		rv= pad10(lat5.toString())+pad10(lon5.toString());
+	}
+	return rv;
+}
+
+function geocode2latlon(geocode) {
+	let re=new RegExp('^[0-9]{20}$');
+	if ( (geocode !=="") && (re.test(geocode)) ) {
+		let clat=geocode.substr(0,10);
+		let clon=geocode.substr(10,10);
+		let lat=(parseInt(clat)-9000000)/1e5;
+		let lon=parseInt(clon)/1e5;
+		if (lon > 180) {
+		lon -=360;
+		}
+		return {"lat":lat.toString(),"lon":lon.toString()};
+	} else {
+		return {}
+	}
+}
+
+function osmMapURL(lat,lon) {
+	if ((lat!=="")&&(lon!=="")){
+		return "https://www.openstreetmap.org/?mlat="+lat+"+&mlon="+lon+"#map=18/"+lat+"/"+lon;
+	} else {
+		return "";
+	}
+}
+
+function getComponent(obj,key) {
+	if (obj.hasOwnProperty(key)) {
+		return obj[key];
+	} else {
+		return "";
+	}
+}
+
+let app1 = new Vue({
+	el: "#app1",
+	data : {
+		inputLatitude: inputLatitude,
+		inputLongitude: inputLongitude,
+		inputGeocode: inputGeocode,
+		},
+	computed : {
+		outputGeocode : function() {
+			return latlon2geocode(this.inputLatitude,this.inputLongitude);
+		},
+		decodedObject : function() {
+			return geocode2latlon(this.inputGeocode);
+		},
+		openStreetMapURL: function() {
+			return osmMapURL(this.outputLatitude,this.outputLongitude);
+		},
+		outputLatitude: function() {
+			return getComponent(this.decodedObject,"lat");
+		},
+		outputLongitude: function() {
+			return getComponent(this.decodedObject,"lon");
+		}
+	},
+	methods : {
+		copyGeocode : function() {
+			this.inputGeocode = this.outputGeocode;
+		},
+		clear : function() {
+			this.inputLatitude="";
+			this.inputLongitude="";
+		},
+		demo1 : function() {
+			this.inputLatitude="52.20220";
+			this.inputLongitude="0.12820";
+		},
+		demo2 : function() {
+			this.inputLatitude="-12.67495";
+			this.inputLongitude="132.81715";
+		}
+			
+	}
+});	
+
+
+</script>
+
+</body>
+</html>
