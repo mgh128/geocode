@@ -28,8 +28,10 @@
 </table>
 
 <h3>Demo locations</h3>
-	<p><button @click="demo1">Reality Checkpoint, Cambridge, UK</button>&nbsp;
-	<button @click="demo2">Bowali Visitor Centre, Kakadu National Park, Northern Territory, Australia</button>&nbsp;
+	<p><button @click="demo1">Reality Checkpoint, Cambridge, UK</button><br/>
+	<button @click="demo2">Bowali Visitor Centre, Kakadu National Park, Northern Territory, Australia</button><br/>
+	<button @click="demo3">Santa Claus Village in Rovaniemi, Finland</button><br/>
+	<button @click="demo4">Comandante Ferraz / Machu Picchu Antarctic Base</button><br/>
 	<button @click="clear">Clear demo values</button></p>
 	
 <h2>all-numeric geocode to latitude, longitude</h2>
@@ -60,12 +62,15 @@ function latlon2geocode(lat,lon) {
 	if ((lat!=="") && (lon !=="")) {
 		let la=parseFloat(lat);
 		let lo=parseFloat(lon);
+		
 		if (lo < 0) {
 		lo+=360;
 		}
 		la+=90;
+
 		let lat7=Math.floor(la*1e7+0.499);
 		let lon7=Math.floor(lo*1e7+0.499);
+
 		rv= pad10(lat7.toString())+pad10(lon7.toString());
 	}
 	return rv;
@@ -76,14 +81,26 @@ function geocode2latlon(geocode) {
 	if ( (geocode !=="") && (re.test(geocode)) ) {
 		let clat=geocode.substr(0,10);
 		let clon=geocode.substr(10,10);
+
 		let lat=(parseInt(clat)-900000000)/1e7;
-		let lon=parseInt(clon)/1e7;
+		let lon=parseInt(clon)/1.00000000e7;
 		if (lon > 180) {
 		lon -=360;
 		}
-		return {"lat":lat.toString(),"lon":lon.toString()};
+				
+		return {"lat":truncateAfter7Digits(lat.toString()),"lon":truncateAfter7Digits(lon.toString())};
 	} else {
 		return {}
+	}
+}
+
+function truncateAfter7Digits(str) {
+	let re=new RegExp('^([-]?\\d+\\.\\d{7})(\\d+)$');
+	if (re.test(str)) {
+		let arr = re.exec(str);
+		return arr[1];
+	} else {
+		return str;
 	}
 }
 
@@ -142,6 +159,14 @@ let app1 = new Vue({
 		demo2 : function() {
 			this.inputLatitude="-12.67495";
 			this.inputLongitude="132.81715";
+		},
+		demo3 : function() {
+			this.inputLatitude="66.543333";
+			this.inputLongitude="25.8475";
+		},
+		demo4 : function() {
+			this.inputLatitude="-62.09149";
+			this.inputLongitude="-58.469905";
 		}
 			
 	}
