@@ -64,8 +64,8 @@ function latlon2geocode(lat,lon) {
 		lo+=360;
 		}
 		la+=90;
-		let lat7=Math.floor(la*1e7);
-		let lon7=Math.floor(lo*1e7);
+		let lat7=Math.floor(la*1e7+0.499);
+		let lon7=Math.floor(lo*1e7+0.499);
 		rv= pad10(lat7.toString())+pad10(lon7.toString());
 	}
 	return rv;
